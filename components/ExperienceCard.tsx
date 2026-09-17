@@ -127,15 +127,15 @@ export default function Page() {
       .then((data) => data.json())
       .then((data) => setExperiences(data.data.slice(0, 8)))
       .catch((err) => console.error(err));
-  }, [experiences]);
+  }, []);
   return (
     <section className="mx-auto max-w-7xl px-4 py-10">
       <div className="mb-10 text-center">
         <h2 className="relative inline-block text-3xl font-extrabold tracking-tight text-[#2E3338]">
-           <span className="relative z-10">超夯在地體驗</span>
-           <span className="absolute right-0 -bottom-1 z-0 h-3 w-full bg-[#BCEFF2]" />
+          <span className="relative z-10">超夯在地體驗</span>
+          <span className="absolute right-0 -bottom-1 z-0 h-3 w-full bg-[#BCEFF2]" />
         </h2>
-        <p className="mt-4 text-sm text-gray-500 pb-6">
+        <p className="mt-4 pb-6 text-sm text-gray-500">
           探險者們最推薦的深度體驗，這週就出發！
         </p>
       </div>
