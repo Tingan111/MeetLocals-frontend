@@ -19,7 +19,8 @@ export function ReviewCard({
   avatarUrl = "/images/carousel1.jpeg",
 }: ReviewCardProps) {
   return (
-    <div className="rounded-3xl bg-gray-100 p-6 shadow-sm">
+    <div className="rounded-3xl bg-gray-100 p-5 shadow-sm md:p-6">
+      {" "}
       <div className="flex items-center gap-3">
         <div className="relative aspect-square h-12 w-12 rounded-full bg-gray-300">
           <img src={avatarUrl} alt="" className="rounded-full object-cover" />
@@ -37,7 +38,6 @@ export function ReviewCard({
           </div>
         </div>
       </div>
-
       <p className="mt-4 text-gray-600">「{comment}」</p>
     </div>
   );
@@ -49,7 +49,8 @@ interface ImageCardProps {
 
 export function ImageCard({ imageUrl }: ImageCardProps) {
   return (
-    <div className="relative h-96 w-full overflow-hidden rounded-3xl">
+    <div className="relative h-64 w-full overflow-hidden rounded-3xl md:h-96">
+      {" "}
       <Image
         src={imageUrl}
         alt=""
@@ -79,6 +80,13 @@ const columns = [
     { type: "image", dataIndex: 2 },
     { type: "review", dataIndex: 3 },
   ],
+];
+const columnsMobile = [
+  [
+    { type: "image", dataIndex: 0 },
+    { type: "review", dataIndex: 1 },
+  ],
+  ,
 ];
 interface reviewsData {
   id: number;
@@ -114,21 +122,20 @@ export default function Home() {
 
   return (
     <section className="mx-auto max-w-7xl px-6 py-10">
-      <div className="mb-10 text-center pb-10">
+      <div className="mb-10 pb-10 text-center">
         <h2 className="relative inline-block text-3xl font-extrabold tracking-tight text-[#2E3338]">
           <span className="relative z-10">旅人好評</span>
-           <span className="absolute right-0 -bottom-1 z-0 h-3 w-full bg-[#BCEFF2]" />
+          <span className="absolute right-0 -bottom-1 z-0 h-3 w-full bg-[#BCEFF2]" />
         </h2>
         <p className="mt-4 text-sm text-gray-500">
           已有超過 10,000 位探險家在 Meet Locals 寫下故事
         </p>
       </div>
-      <div className="grid grid-cols-2 gap-8 xl:grid-cols-4">
+      {/* 桌機版 */}
+      <div className="hidden grid-cols-2 gap-5 md:grid xl:grid-cols-4">
+        {" "}
         {columns.map((column, colIndex) => (
-          <div
-            key={colIndex}
-            className={`space-y-8 ${colIndex % 2 === 0 ? "md:pt-24" : ""}`}
-          >
+          <div key={colIndex} className={`} space-y-5 md:space-y-8`}>
             {column.map((item, itemIndex) => {
               const reviewItem = reviewsData[item.dataIndex];
               // 4. 防呆：如果 API 回傳的資料筆數不夠對應這個 index，直接跳過不渲染
@@ -153,6 +160,33 @@ export default function Home() {
             })}
           </div>
         ))}
+      </div>
+      <div className="grid grid-cols-1 gap-5 md:hidden">
+        {" "}
+        {columns.map((item, itemIndex) => {
+          const reviewItem = reviewsData[itemIndex];
+          // 4. 防呆：如果 API 回傳的資料筆數不夠對應這個 index，直接跳過不渲染
+          if (!reviewItem) return null;
+
+          return (
+            <>
+              {" "}
+              <ImageCard
+                key={itemIndex}
+                imageUrl={
+                  reviewItem.experience_image || "/images/carousel1.jpeg"
+                }
+              />
+              <ReviewCard
+                key={itemIndex}
+                memberName={reviewItem.name}
+                rating={reviewItem.rating}
+                comment={reviewItem.comment}
+                avatarUrl={`${API_SERVER}${reviewItem.avatar_url}`}
+              />
+            </>
+          );
+        })}
       </div>
     </section>
   );
