@@ -35,18 +35,25 @@ export default function ChatWidget() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
-  // 歷史訊息
+  // fetch api 存入useState裡 依賴變數 auth.id
   useEffect(() => {
     if (!auth.id) return;
 
-    fetch(`http://localhost:3001/api/chat/${auth.id}/messages`)
-      .then((res) => res.json())
-      .then((data) => {
-        setMessages((prev) => {
-          if (prev.length > 0) return prev;
-          return data;
-        });
-      });
+    const loadHistory = async () => {
+      try {
+        const res = await fetch(
+          `http://localhost:3001/api/chat/${auth.id}/messages`,
+        );
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+
+        const data = await res.json();
+        setMessages((prev) => (prev.length > 0 ? prev : data));
+      } catch (error) {
+        console.error("載入歷史訊息失敗:", error);
+      }
+    };
+
+    loadHistory();
   }, [auth.id]);
 
   // 客服在線狀態
@@ -96,7 +103,6 @@ export default function ChatWidget() {
     socket.on("receive-message", handleMessage);
     socket.on("messages-read", handleMessagesRead);
     socket.on("admin-typing", handleAdminTyping);
-
     return () => {
       socket.off("receive-message", handleMessage);
       socket.off("messages-read", handleMessagesRead);
@@ -137,7 +143,6 @@ export default function ChatWidget() {
     setMessages((prev) => [...prev, tempMessage]);
     setInput("");
     resetTextareaHeight();
-
     socket.emit("send-message", {
       roomId: `user-${auth.id}`,
       text: message,
@@ -434,7 +439,7 @@ export default function ChatWidget() {
                     }
                   }}
                   disabled={isUploading || (!input.trim() && !previewImage)}
-                  className="mb-1.5 mr-1.5 flex-shrink-0 self-end rounded-full bg-[#45cad5] p-2 text-white transition-colors hover:bg-[#3bb8c3] disabled:opacity-50"
+                  className="mr-1.5 mb-1.5 flex-shrink-0 self-end rounded-full bg-[#45cad5] p-2 text-white transition-colors hover:bg-[#3bb8c3] disabled:opacity-50"
                 >
                   <Send size={18} />
                 </button>
