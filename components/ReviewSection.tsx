@@ -169,22 +169,19 @@ export default function Home() {
           if (!reviewItem) return null;
 
           return (
-            <>
-              {" "}
+            <div key={itemIndex}>
               <ImageCard
-                key={itemIndex}
                 imageUrl={
                   reviewItem.experience_image || "/images/carousel1.jpeg"
                 }
               />
               <ReviewCard
-                key={itemIndex}
                 memberName={reviewItem.name}
                 rating={reviewItem.rating}
                 comment={reviewItem.comment}
                 avatarUrl={`${API_SERVER}${reviewItem.avatar_url}`}
               />
-            </>
+            </div>
           );
         })}
       </div>
